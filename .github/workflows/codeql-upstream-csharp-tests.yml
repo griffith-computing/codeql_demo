@@ -1,0 +1,42 @@
+name: CodeQL upstream C# regression suite
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-upstream-csharp-tests
+  cancel-in-progress: false
+
+jobs:
+  csharp-ql-tests:
+    name: Full csharp/ql/test tree
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Check out pinned CodeQL source
+        uses: actions/checkout@v5
+        with:
+          repository: github/codeql
+          ref: codeql-cli/v2.26.4
+          path: upstream-codeql
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.400
+
+      - name: Set up matching CodeQL CLI
+        id: setup-codeql
+        uses: github/codeql-action/setup-codeql@v4
+        with:
+          tools: https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.26.4/codeql-bundle-linux64.tar.gz
+
+      - name: Run all upstream C# QL tests
+        working-directory: upstream-codeql
+        run: '"${{ steps.setup-codeql.outputs.codeql-path }}" test run --threads=0 csharp/ql/test'

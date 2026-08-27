@@ -1,0 +1,6 @@
+- description: CodeQL demo engagement queries for C#
+- queries: .
+- include:
+    id:
+      - codeql-demo/public-async-void
+

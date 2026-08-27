@@ -1,0 +1,9 @@
+name: codeql-demo/csharp-queries
+version: 1.0.0
+description: Custom C# review queries used by the CodeQL engagement demo.
+extractor: csharp
+dependencies:
+  codeql/csharp-all: 7.2.0
+defaultSuiteFile: suites/engagement.qls
+warnOnImplicitThis: true
+

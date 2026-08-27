@@ -1,0 +1,1 @@
+| BadExamples.cs:7:23:7:31 | SaveAsync | Return Task or Task<T> instead of void from this async API. |
