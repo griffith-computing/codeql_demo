@@ -1,0 +1,6 @@
+name: CodeQL .NET 10 demo configuration
+
+queries:
+  - uses: security-and-quality
+  - uses: ./codeql/demo-queries/suites/engagement.qls
+

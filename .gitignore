@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+.codeql/
+artifacts/
+*.user
+*.suo
+

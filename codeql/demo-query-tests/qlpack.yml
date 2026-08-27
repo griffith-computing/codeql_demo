@@ -1,0 +1,8 @@
+name: codeql-demo/csharp-query-tests
+dependencies:
+  codeql-demo/csharp-queries: "*"
+  codeql/csharp-all: 7.2.0
+extractor: csharp
+tests: .
+warnOnImplicitThis: true
+

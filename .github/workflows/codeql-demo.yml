@@ -1,0 +1,73 @@
+name: CodeQL demo scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-demo-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze C# demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.400
+          cache: true
+          cache-dependency-path: |
+            src/**/*.csproj
+            tests/**/*.csproj
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          config-file: ./.github/codeql/codeql-config.yml
+          tools: https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.26.4/codeql-bundle-linux64.tar.gz
+
+      - name: Restore dependencies
+        run: dotnet restore CodeQLDemo.sln
+
+      - name: Build application
+        run: dotnet build CodeQLDemo.sln --configuration Release --no-restore
+
+      - name: Run application tests
+        run: dotnet test CodeQLDemo.sln --configuration Release --no-build
+
+      - name: Analyze and upload results
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:csharp
+          output: artifacts/codeql
+          upload: always
+
+      - name: Retain SARIF evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-demo-sarif
+          path: artifacts/codeql
+          if-no-files-found: error
+          retention-days: 14
